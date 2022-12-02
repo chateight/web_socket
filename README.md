@@ -4,6 +4,6 @@
 
 ws_client.js will be loaded when client access the raspberrypi server
 
-ws_server.js communicates with ws_client.js when the session was estavlished
+ws_server.js communicates with ws_client.js when the session was established
 
 chart_js folder is for chart.js test script
