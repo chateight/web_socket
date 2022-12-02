@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+</head>
+<body>
+<h1>Graph sample</h1>
+<div id="canvas" style="height:200pt; width:400pt">
+    <canvas id="myChart"></canvas>
+</div>
+
+<script>
+// test data
+let tgt_str_a = [];				// data from M5stack array
+tgt_str_a.push("2022/10/30 19:26 37 23.72");		// assumed format
+tgt_str_a.push("2022/10/30 19:26 42 20.72");
+tgt_str_a.push("2022/10/30 19:26 47 15.5");
+tgt_str_a.push("2022/10/30 19:26 52 10.3");
+tgt_str_a.push("2022/10/30 19:26 57 -4.8");
+
+//
+// regx process, generate object & convert it to json format
+//
+const hour_sec = /\s[\d|:|.|\s]*/g;
+const temp_str = /\s[\d|.|-]*/g;
+
+let data_obj = {};
+
+tgt_str_a.forEach(function(data ){
+	regx_time = data.match(hour_sec)[0].substr(1);
+	regx_val = data.match(temp_str)[2].substr(1);
+	data_obj[regx_time] = parseFloat(regx_val);
+});
+
+let tgt_json = JSON.stringify(data_obj);
+// ----------------- above is for a server side process 
+let tgt_obj = JSON.parse(tgt_json);
+
+console.log(tgt_obj);
+
+let key_array = [];
+let val_array = [];
+
+for(key in tgt_obj){
+	key_array.push(key);
+	val_array.push(tgt_obj[key]);
+};
+
+//
+// to generate graph
+//
+  const ctx = document.getElementById('myChart');
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: key_array,	
+      datasets: [{
+        label: 'temperature',
+        fill: false,
+        backgroundColor: '#0000ff', 
+        borderColor: '#0000ff', 
+        data:val_array,
+        borderWidth: 2
+      }]
+    },
+    options: {
+      scales: {
+        yAxes:  [{
+          ticks: {
+            suggestedMax: 40,
+            suggestedMin: 0,
+            stepSize: 5,
+          }
+        }]
+      }
+    }
+  });
+</script>
+</body>
+</html>
